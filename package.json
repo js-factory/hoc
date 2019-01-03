@@ -1,0 +1,26 @@
+{
+  "name": "@jsfactory/hoc",
+  "version": "0.0.1",
+  "description": "Higher order component",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/js-factory/hoc.git"
+  },
+  "keywords": [
+    "hoc",
+    "react",
+    "preact",
+    "component",
+    "reusable"
+  ],
+  "author": "jsfactory",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/js-factory/hoc/issues"
+  },
+  "homepage": "https://github.com/js-factory/hoc#readme"
+}
