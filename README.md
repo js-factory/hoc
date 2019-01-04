@@ -2,16 +2,20 @@
 
 hoc provide a simple apis to create javascript reusable components. It provide an abstraction from underlying framework, helps reuse the same component for different libraries with minimum code changes. 
 
+# Install
 
+```
+npm i -S @js-factory/hoc 
+```
 
 # features!
-  - Promotes vanilla javascript use
-
+  - Allow you to maximize vanilla javascript use
+  - Promotes function programming by exposting functions/methods outside the class
 
 ```js
 // ExampleComponent.js
 
-import { component } from 'hoc';
+import { withPreact as component } from '@js-factory/hoc';
 import afterRender from './hooks/afterRender';
 import afterUpdate from './hooks/afterUpdate';
 import beforeRender from './hooks/beforeRender';

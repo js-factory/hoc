@@ -2,7 +2,7 @@
   "name": "@js-factory/hoc",
   "version": "0.0.1",
   "description": "Higher order component",
-  "main": "./dist",
+  "main": "./dist/index.js",
   "scripts": {
     "test": "jest",
     "build": "babel integration --out-dir dist",

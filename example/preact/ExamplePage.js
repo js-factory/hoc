@@ -1,5 +1,5 @@
 import { h } from 'preact';
-import component from '@js-factory/hoc/preact/component';
+import { withPreact as component } from '@js-factory/hoc';
 
 @component({
     beforeRender() {
@@ -27,7 +27,7 @@ import component from '@js-factory/hoc/preact/component';
         console.log('instance prop', getInstanceProps())
         return (
             <div>
-            <h1>Example Page</h1>
+                <h1>Example Page</h1>
                 <button onClick={onClickHandler}>Increment</button>
                 <p>state - {x}</p>
                 <p>ip - {getInstanceProps().y}</p>
