@@ -1,10 +1,12 @@
 {
-  "name": "@jsfactory/hoc",
+  "name": "@js-factory/hoc",
   "version": "0.0.1",
   "description": "Higher order component",
-  "main": "index.js",
+  "main": "./dist",
   "scripts": {
-    "test": "test"
+    "test": "jest",
+    "build": "babel integration --out-dir dist",
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -17,10 +19,23 @@
     "component",
     "reusable"
   ],
-  "author": "jsfactory",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-decorators-legacy": "^1.3.5",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-plugin-transform-react-jsx": "^6.24.1",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-preact": "^1.1.0"
+  },
+  "author": "js-factory",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/js-factory/hoc/issues"
   },
-  "homepage": "https://github.com/js-factory/hoc#readme"
+  "homepage": "https://github.com/js-factory/hoc#readme",
+  "dependencies": {
+    "preact": "^8.4.2"
+  }
 }
