@@ -5,6 +5,7 @@
     "server": "webpack-dev-server --open"
   },
   "dependencies": {
+    "@js-factory/hoc": "0.0.3",
     "preact": "^8.4.2",
     "webpack": "^4.27.1",
     "webpack-dev-server": "^3.1.10"
