@@ -2,11 +2,13 @@ import { h } from 'preact';
 import { withPreact as component } from '@js-factory/hoc';
 
 @component({
-    beforeRender() {
-        console.log('before render');
-    },
-    afterRender({ sayHello }) {
-        console.log('afterRender');
+    hooks: {
+        componentWillMount() {
+            console.log('before render');
+        },
+        componentDidMount({ sayHello }) {
+            console.log('afterRender');
+        }
     },
     state: {
         x: 1,
@@ -15,16 +17,18 @@ import { withPreact as component } from '@js-factory/hoc';
         y: 1
     },
     eventHandlers: {
-        onClickHandler({ x, onClickAction, setState, getInstanceProps, setInstanceProps }) {
+        onClickHandler({ getState, onClickAction, setState, getInstanceProps, setInstanceProps }) {
             const { y } = getInstanceProps();
+            const { x } = getState();
             setInstanceProps({ y: y + 1 });
             setState({ x: x + 1 });
         }
     },
     template: (props) => {
-        const { x, onClickHandler, getInstanceProps, state } = props;
-        console.log('state', x);
+        const { getState, onClickHandler, getInstanceProps, state } = props;
+        console.log('state', getState());
         console.log('instance prop', getInstanceProps())
+        const { x } = getState();
         return (
             <div>
                 <h1>Example Page</h1>

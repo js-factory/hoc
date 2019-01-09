@@ -16,11 +16,11 @@ npm i -S @js-factory/hoc
 // ExampleComponent.js
 
 import { withPreact as component } from '@js-factory/hoc';
-import afterRender from './hooks/afterRender';
-import afterUpdate from './hooks/afterUpdate';
-import beforeRender from './hooks/beforeRender';
-import beforeUpdate from './hooks/beforeUpdate';
-import beforeUnmount from './hooks/beforeUnmount';
+import componentDidMount from './hooks/afterRender';
+import componentShouldUpdate from './hooks/afterUpdate';
+import componentWillMount from './hooks/beforeRender';
+import componentWillUpdate from './hooks/beforeUpdate';
+import componentWillUnmount from './hooks/beforeUnmount';
 import onClickHanlder from './handlers/onClickHanlder';
 import onScrollHanlder from './handlers/onScrollHanlder';
 import ExampleComponentTmpl from './templates/ExampleComponentTmpl';
@@ -35,12 +35,14 @@ const instanceProps = {
 
 @component({
     state,
-    afterRender,
-    afterUpdate,
-    beforeRender,
-    beforeUpdate,
-    beforeUnmount,
     instanceProp,
+    hooks: {
+        componentDidMount,
+        componentWillMount,
+        componentWillUpdate,
+        componentWillUnmount,
+         componentShouldUpdate
+    },
     eventHandler: {
         onClickHanlder,
         onScrollHanlder
@@ -56,8 +58,8 @@ export default class ExampleComponent {}
 import {h} from 'preact';
 
 const ExampleComponentTmpl = (props) => {
-    const { state, onClickHander } = props;
-    const {salutation} = state;
+    const { getState, onClickHander } = props;
+    const {salutation} = getState();
     return(
         <div>
             <p> {salutation} customer! </p>
@@ -70,23 +72,24 @@ const ExampleComponentTmpl = (props) => {
 ### state
 **state** is component local state. It can be modified with `setState` function. Every call to `setState` will cause component re-rending. In case you do not want render the component every time state changes, please use instanceProp.
 
+In order to access application state you need to use `getState` method.
+
 ### instanceProp
 **instanceProp** is same as *state* but it offers its own getter `getInstanceProp` and setter `setInstanceProp`. instanceProp changes do not call `render`.
 
 ### hooks
-hoc offers multiple lifecycle hooks get attached to underlying library lifecycle methods.
-   - **beforeRender** gets called before component's render method
-   - **afterRender** gets called after component is mounted
-   - **beforeUpdate** gets called before components is updated
-   - **afterUpdate** gets called after componet is updated
-   - **beforeUnmount** gets called before component is removed from current DOM
+hoc allows developer to use underlying library hooks like componentDidMount, componentWillMount etc. Please refer above component definition.
+
+**Note:** Unlike react or preact you will not have access to `this`. You will get all the handlers, action, state as a props.
+
 
 ### eventHandler
 **eventHandler** is a collection of dom event handlers i.e. click, scroll, mouseover etc. Event handlers are plain javascript functions and surely not tightely coupued with any underlying library.
 ```js
 const onClickHandler = (props, e) => {
   e.preventDefault();
-  const { state, setState, getInstanceProp } = props;
+  const { getState, setState, getInstanceProp } = props;
+  const state = getState();
   return setState({
     ...state,
     updateMsg: 'I am updated'

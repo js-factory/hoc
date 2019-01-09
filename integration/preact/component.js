@@ -43,6 +43,7 @@ let storeActivated = false;
 
 export default function component(options = {}) {
     const {
+        hooks,
         state,
         template,
         templates,
@@ -61,20 +62,17 @@ export default function component(options = {}) {
                 super(props, context);
                 const { actions: storeActions, watcher: storeWatcher = [] } = props;
                 const setState = (props) => this.setState({ ...props });
+                const getState = () => this.state;
                 watcher = storeWatcher || watcher;
                 actions = storeActions || actions;
                 this.state = state || {};
-                this.handlers = { setState };
+                this.handlers = { setState, getState };
                 this.storeAttached = hasWatches(watcher);
 
                 // Attach handlers
                 bindHandler.call(this, eventHandlers, this.bindLifecycleHandlers);
                 bindHandler.call(this, actions, store.action);
 
-                // Bind lifecycle methods
-                beforeRender && (this.componentWillMount = this.bindLifecycleHandlers(beforeRender, this));
-                beforeUpdate && (this.componentWillUpdate = this.bindLifecycleHandlers(beforeUpdate, this));
-                afterUpdate && (this.componentDidUpdate = this.bindLifecycleHandlers(afterUpdate, this));
                 instanceProps && (this.instanceProps = attachInstanceProps(instanceProps));
 
                 let globalState = this.storeAttached ? getProps(watcher)(store ? store.getState() : {}, props) : {};
@@ -97,28 +95,29 @@ export default function component(options = {}) {
                 };
 
                 this.mergeProps = () => {
-                    const { state, handlers, instanceProps } = this;
+                    const { handlers, instanceProps } = this;
                     return {
-                        ...state,
                         ...props,
+                        ...instanceProps,
                         ...globalState,
-                        ...handlers,
-                        ...instanceProps
+                        ...handlers
                     };
                 }
-
-                this.componentDidMount = () => {
-                    exec.call(this, afterRender, this.mergeProps());
-                    if (this.storeAttached) {
-                        store.subscribe(updateStore);
-                    }
-                }
-
-                this.componentWillUnmount = () => {
-                    exec.call(this, beforeUnmount, this.mergeProps());
-                    if (this.storeAttached) {
-                        store.unsubscribe(updateStore);
-                    }
+                if (hooks) {
+                    const { componentDidMount, componentWillUnmount, ...other } = hooks;
+                    other && Object.keys(other).map(key => (this[key] = this.bindLifecycleHandlers(other[key], this)));
+                    componentDidMount && (this.componentDidMount = () => {
+                        exec.call(this, componentDidMount, this.mergeProps());
+                        if (this.storeAttached) {
+                            store.subscribe(updateStore);
+                        }
+                    })
+                    componentWillUnmount && (this.componentWillUnmount = () => {
+                        exec.call(this, componentWillUnmount, this.mergeProps());
+                        if (this.storeAttached) {
+                            store.unsubscribe(updateStore);
+                        }
+                    })
                 }
 
                 this.render = (props) => {
@@ -127,10 +126,10 @@ export default function component(options = {}) {
                 };
             }
             bindLifecycleHandlers(func, context) {
-                return func && function () {
-                    const { state, props, handlers, instanceProps, storeAttached } = this;
+                return func && function hook() {
+                    const { props, handlers, instanceProps, storeAttached } = this;
                     let globalState = storeAttached ? getProps(watcher)(store ? store.getState() : {}) : {};
-                    func.apply(null, [{ ...state, ...props, ...instanceProps, ...handlers, ...globalState }, ...arguments]);
+                    func.apply(null, [{ ...props, ...instanceProps, ...globalState, ...handlers }, ...arguments]);
                 }.bind(context);
             }
         };
