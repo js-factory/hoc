@@ -60,14 +60,16 @@ export default function component(options = {}) {
         return class Wrapper extends Component {
             constructor(props, context = {}) {
                 super(props, context);
-                const { actions: storeActions, watcher: storeWatcher = [] } = props;
                 const setState = (props) => this.setState({ ...props });
                 const getState = () => this.state;
-                watcher = storeWatcher || watcher;
-                actions = storeActions || actions;
+                this.__store__ = Wrapper.__store__;
+
+                if (this.__store__) {
+                    watcher = this.__store__.watcher;
+                    actions = this.__store__.actions;
+                }
                 this.state = state || {};
                 this.handlers = { setState, getState };
-                this.storeAttached = hasWatches(watcher);
 
                 // Attach handlers
                 bindHandler.call(this, eventHandlers, this.bindLifecycleHandlers);
@@ -75,9 +77,9 @@ export default function component(options = {}) {
 
                 instanceProps && (this.instanceProps = attachInstanceProps(instanceProps));
 
-                let globalState = this.storeAttached ? getProps(watcher)(store ? store.getState() : {}, props) : {};
+                let globalState = this.__store__ ? getProps(watcher)(store ? store.getState() : {}, props) : {};
                 const updateStore = () => {
-                    if (!this.storeAttached) {
+                    if (!this.__store__) {
                         return;
                     }
                     let localState = getProps(watcher)(store ? store.getState() : {}, this.props);
@@ -108,13 +110,13 @@ export default function component(options = {}) {
                     other && Object.keys(other).map(key => (this[key] = this.bindLifecycleHandlers(other[key], this)));
                     componentDidMount && (this.componentDidMount = () => {
                         exec.call(this, componentDidMount, this.mergeProps());
-                        if (this.storeAttached) {
+                        if (this.__store__) {
                             store.subscribe(updateStore);
                         }
                     })
                     componentWillUnmount && (this.componentWillUnmount = () => {
                         exec.call(this, componentWillUnmount, this.mergeProps());
-                        if (this.storeAttached) {
+                        if (this.__store__) {
                             store.unsubscribe(updateStore);
                         }
                     })
@@ -127,8 +129,8 @@ export default function component(options = {}) {
             }
             bindLifecycleHandlers(func, context) {
                 return func && function hook() {
-                    const { props, handlers, instanceProps, storeAttached } = this;
-                    let globalState = storeAttached ? getProps(watcher)(store ? store.getState() : {}) : {};
+                    const { props, handlers, instanceProps, __store__ } = this;
+                    let globalState = __store__ ? getProps(watcher)(store ? store.getState() : {}) : {};
                     func.apply(null, [{ ...props, ...instanceProps, ...globalState, ...handlers }, ...arguments]);
                 }.bind(context);
             }
@@ -140,4 +142,3 @@ export function injectStore(appStore) {
     store = appStore;
     storeActivated = true;
 }
-
