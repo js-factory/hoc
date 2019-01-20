@@ -1,0 +1,33 @@
+{
+  "description": "React higher order component",
+  "main": "./component.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/js-factory/hoc.git"
+  },
+  "keywords": [
+    "hoc",
+    "react",
+    "component",
+    "reusable"
+  ],
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-decorators-legacy": "^1.3.5",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-plugin-transform-react-jsx": "^6.24.1",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1"
+  },
+  "author": "js-factory",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/js-factory/hoc/issues"
+  },
+  "homepage": "https://github.com/js-factory/hoc#readme",
+  "dependencies": {
+    "react": "^16.7.0"
+  }
+}

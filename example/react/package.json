@@ -1,0 +1,31 @@
+{
+  "main": "webpack.config.js",
+  "scripts": {
+    "ex": "webpack --mode production --watch --progress",
+    "start": "webpack-dev-server --open"
+  },
+  "dependencies": {
+    "@js-factory/hoc": "0.0.3",
+    "babel-preset-react": "^6.24.1",
+    "react": "^16.7.0",
+    "react-dom": "^16.7.0",
+    "webpack": "^4.27.1",
+    "webpack-dev-server": "^3.1.10"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-eslint": "^8.2.6",
+    "babel-loader": "^7.1.5",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-decorators": "^6.24.1",
+    "babel-plugin-transform-decorators-legacy": "^1.3.5",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-plugin-transform-react-jsx": "^6.24.1",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-es2017": "^6.24.1",
+    "babel-preset-preact": "^1.1.0",
+    "babel-preset-stage-3": "^6.24.1",
+    "webpack-cli": "^3.1.2"
+  }
+}
