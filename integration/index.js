@@ -1,3 +1,10 @@
-import withPreact from './preact/component';
+import Component from './preact/component_v2';
 
-export { withPreact };
+const withState = Component;
+
+export {
+    withState,
+    Component
+};
+
+export default Component;

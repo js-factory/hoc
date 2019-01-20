@@ -10,6 +10,22 @@ const isObject = (target) => (Object.prototype.toString.call(target) === '[objec
 let store = {};
 let storeActivated = false;
 
+function profile(...rest) {
+    const id = rest.id;
+    return function decorator(target, key, descriptor) {
+        const fn = descriptor.value;
+
+        return {
+            ...descriptor,
+            value() {
+                console.time(id || key);  // eslint-disable-line
+                fn.apply(this, rest);
+                console.timeEnd(id || key); // eslint-disable-line
+            }
+        };
+    };
+}
+
 function attachInstanceProps(instanceProps) {
     this.instanceProps = instanceProps || {};
     this.getInstanceProps = () => this.instanceProps;
@@ -24,11 +40,12 @@ function attachInstanceProps(instanceProps) {
 
 export default function component(options = {}) {
     const {
-        hooks,
         state,
-        handlers,
         template,
-        instanceProps
+        instanceProps,
+        componentDidMount,
+        componentWillUnmount,
+        ...otherHooksAndHandlers
     } = options;
     let { actions, watcher } = options;
     return function wrapper(InnerComponent) {
@@ -44,9 +61,7 @@ export default function component(options = {}) {
                     actions = this.__store__.actions;
                 }
                 this.state = state || {};
-                this.handlers = { setState, getState };
                 // Attach handlers
-                bindHandler.call(this, handlers, this.proxy);
                 bindHandler.call(this, actions, store.action);
                 attachInstanceProps.call(this, instanceProps);
 
@@ -69,40 +84,41 @@ export default function component(options = {}) {
                     }
                 };
 
-                this.mergeProps = () => {
-                    const { state, handlers, instanceProps, getInstanceProps, setInstanceProps } = this;
-                    return {
-                        state,
-                        ...props,
-                        ...handlers,
-                        ...globalState,
-                        instanceProps,
-                        getInstanceProps,
-                        setInstanceProps
-                    };
-                }
-                if (hooks) {
-                    const { componentDidMount, componentWillUnmount, ...other } = hooks;
-                    other && Object.keys(other).map(key => (this[key] = this.proxy(other[key], this)));
-                    componentDidMount && (this.componentDidMount = () => {
-                        componentDidMount.call(null, this.mergeProps());
-                        if (this.__store__) {
-                            store.subscribe(updateStore);
-                        }
-                    })
-                    componentWillUnmount && (this.componentWillUnmount = () => {
-                        componentWillUnmount.call(null, this.mergeProps());
-                        if (this.__store__) {
-                            store.unsubscribe(updateStore);
-                        }
-                    })
-                }
+                this.mergeProps = () => ({
+                    ...this,
+                    ...props,
+                    setState,
+                    getState,
+                    ...globalState
+                });
+
+                otherHooksAndHandlers && Object.keys(otherHooksAndHandlers).map((key) => {
+                    const fn = otherHooksAndHandlers[key];
+                    if (typeof fn === 'function') {
+                        this[key] = this.proxy(fn, this, key);
+                    }
+                });
+
+                componentDidMount && (this.componentDidMount = () => {
+                    componentDidMount.call(null, this.mergeProps());
+                    if (this.__store__) {
+                        store.subscribe(updateStore);
+                    }
+                })
+
+                componentWillUnmount && (this.componentWillUnmount = () => {
+                    componentWillUnmount.call(null, this.mergeProps());
+                    if (this.__store__) {
+                        store.unsubscribe(updateStore);
+                    }
+                })
+
                 this.render = (props) => {
                     const view = template || templates || InnerComponent;
                     return h(view, this.mergeProps());
                 };
             }
-            proxy(func, context) {
+            proxy(func, context, key) {
                 return func && function hook() {
                     const { __store__ } = this;
                     let globalState = __store__ ? getProps(watcher)(store ? store.getState() : {}) : {};

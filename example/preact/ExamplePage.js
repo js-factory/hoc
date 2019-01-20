@@ -1,42 +1,45 @@
-import { h } from 'preact';
-import { withPreact as component } from '@js-factory/hoc';
+import { Component } from '@js-factory/hoc';
+import ExampleTmpl from './ExampleTmpl';
 
-@component({
-    hooks: {
-        componentWillMount() {
-            console.log('before render');
-        },
-        componentDidMount({ sayHello }) {
-            console.log('afterRender');
-        }
+@Component({
+    componentWillMount({ state }) {
+        console.log('before render', state.x);
+    },
+    componentDidMount({ state }) {
+        console.log('after Render', state.x);
+    },
+    componentDidUpdate({ state }) {
+        console.log('after Update', state.x);
     },
     state: {
-        x: 1,
+        z: 100,
+        x: 1
     },
     instanceProps: {
+        z: 100,
         y: 1
     },
-    eventHandlers: {
-        onClickHandler({ getState, onClickAction, setState, getInstanceProps, setInstanceProps }) {
-            const { y } = getInstanceProps();
-            const { x } = getState();
-            setInstanceProps({ y: y + 1 });
-            setState({ x: x + 1 });
-        }
+    sayHello({ state }, name, date) {
+        const { x } = state;
+        console.log(`x - ${x}`);
+        console.log(`Hello ${name} : ${date}`);
     },
-    template: (props) => {
-        const { getState, onClickHandler, getInstanceProps, state } = props;
-        console.log('state', getState());
-        console.log('instance prop', getInstanceProps())
+    onClickHandler(props, e) {
+        e.preventDefault();
+        const {
+            getState,
+            onClickAction,
+            setState,
+            getInstanceProps,
+            setInstanceProps,
+            sayHello
+        } = props
+        const { y } = getInstanceProps();
         const { x } = getState();
-        return (
-            <div>
-                <h1>Example Page</h1>
-                <button onClick={onClickHandler}>Increment</button>
-                <p>state - {x}</p>
-                <p>ip - {getInstanceProps().y}</p>
-            </div>
-        );
-    }
+        setInstanceProps({ y: y + 1 });
+        setState({ x: x + 1 });
+        sayHello('Foo', Date.now());
+    },
+    template: ExampleTmpl
 })
 export default class ExamplePage { }

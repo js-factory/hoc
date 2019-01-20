@@ -1,20 +1,12 @@
 {
-  "name": "@js-factory/hoc",
-  "version": "0.1.1",
-  "description": "Higher order component",
-  "main": "./packages/index.js",
-  "scripts": {
-    "test": "jest",
-    "build": "babel integration --out-dir packages",
-    "prepublishOnly": "npm run build"
-  },
+  "description": "Preact higher order component",
+  "main": "./component_v2.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/js-factory/hoc.git"
   },
   "keywords": [
     "hoc",
-    "react",
     "preact",
     "component",
     "reusable"

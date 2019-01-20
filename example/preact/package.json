@@ -2,7 +2,7 @@
   "main": "webpack.config.js",
   "scripts": {
     "ex": "webpack --mode production --watch --progress",
-    "server": "webpack-dev-server --open"
+    "start": "webpack-dev-server --open"
   },
   "dependencies": {
     "@js-factory/hoc": "0.0.3",
