@@ -2,33 +2,32 @@
 
 hoc provide a simple apis to create javascript reusable components. It provide an abstraction from underlying framework, helps reuse the same component for different libraries with minimum code changes. 
 
-## Install
+## Installation
 
 ```
 npm i -S @js-factory/hoc 
-
 ```
 
 ## Motivation
 Modern frontend applications are getting complex day by day. It has to manage core business logic, even more complex layouts, and data. This is extremely important that frontend application architecture follows core software design principles. 
 
-### Separation of concern
-
 In [computer science](https://en.wikipedia.org/wiki/Computer_science), separation of concerns (SoC) is a design principle for separating a computer program into distinct sections, such that each section addresses a separate [concern](https://en.wikipedia.org/wiki/Concern_%28computer_science%29).
+
+`hoc` prefers [functional programming](https://en.wikipedia.org/wiki/Functional_programming) and allows programmers to write small functions. These functions follow [single responsibility principle](https://en.wikipedia.org/wiki/Single_responsibility_principle) and do just one thing and produce predictable output.
 
 
 ## Getting Started
 ```js
 // ExampleComponent.js
 
-import { withPreact as withState } from '@js-factory/hoc';
+import { Component } from '@js-factory/hoc';
 import componentDidMount from './hooks/afterRender';
 import componentShouldUpdate from './hooks/afterUpdate';
 import componentWillMount from './hooks/beforeRender';
 import componentWillUpdate from './hooks/beforeUpdate';
 import componentWillUnmount from './hooks/beforeUnmount';
-import onClickHanlder from './handlers/onClickHanlder';
-import onScrollHanlder from './handlers/onScrollHanlder';
+import onClickHandler from './handlers/onClickHanlder';
+import onScrollHandler from './handlers/onScrollHanlder';
 import ExampleComponentTmpl from './templates/ExampleComponentTmpl';
 
 const state = {
@@ -39,7 +38,7 @@ const instanceProps = {
     counter: 0
 };
 
-@withState({
+@Component({
     state,
     instanceProp,
     componentDidMount,
@@ -131,9 +130,7 @@ You can define any dom event handler and bind it with component. Event handlers 
 const onClickHandler = (props, e) => {
   e.preventDefault();
   const { state, setState, getInstanceProp } = props;
-  const state = getState();
   return setState({
-    ...state,
     updateMsg: 'I am updated'
   });
 }
@@ -152,8 +149,4 @@ function foo(props, ...args){
 ```
 
 **props** contains component state, methods etc. 
-**...args** are runtime arguments supplied
-
-
- 
- 
+**args** are runtime arguments supplied
