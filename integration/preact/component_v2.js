@@ -4,27 +4,11 @@
 
 import { h, Component } from 'preact';
 import getProps from '../util/getProps';
-import bindHandler from '../util/bindHandler';
 
 const isObject = (target) => (Object.prototype.toString.call(target) === '[object Object]');
 let store = {};
 let storeActivated = false;
 
-function profile(...rest) {
-    const id = rest.id;
-    return function decorator(target, key, descriptor) {
-        const fn = descriptor.value;
-
-        return {
-            ...descriptor,
-            value() {
-                console.time(id || key);  // eslint-disable-line
-                fn.apply(this, rest);
-                console.timeEnd(id || key); // eslint-disable-line
-            }
-        };
-    };
-}
 
 function attachInstanceProps(instanceProps) {
     this.instanceProps = instanceProps || {};
@@ -38,6 +22,15 @@ function attachInstanceProps(instanceProps) {
     };
 }
 
+function bindHandler(handlers, modifier) {
+    handlers && Object.keys(handlers).map((key) => {
+        const fn = handlers[key];
+        if (typeof fn === 'function') {
+            this[key] = modifier(fn, this);
+        }
+    });
+}
+
 export default function component(options = {}) {
     const {
         state,
@@ -45,7 +38,7 @@ export default function component(options = {}) {
         instanceProps,
         componentDidMount,
         componentWillUnmount,
-        ...otherHooksAndHandlers
+        ...rest
     } = options;
     let { actions, watcher } = options;
     return function wrapper(InnerComponent) {
@@ -54,23 +47,29 @@ export default function component(options = {}) {
                 super(props, context);
                 const setState = (newState) => this.setState({ ...newState });
                 const getState = () => this.state;
+                const _self = this;
+
+                this.state = state || {};
                 this.__store__ = Wrapper.__store__;
 
                 if (this.__store__) {
                     watcher = this.__store__.watcher;
                     actions = this.__store__.actions;
                 }
-                this.state = state || {};
+
+                const pluck = getProps(watcher);
                 // Attach handlers
                 bindHandler.call(this, actions, store.action);
+                bindHandler.call(this, rest, this.proxy);
                 attachInstanceProps.call(this, instanceProps);
 
-                let globalState = this.__store__ ? getProps(watcher)(store ? store.getState() : {}, props) : {};
+                let globalState = this.__store__ ? pluck(store ? store.getState() : {}) : {};
+
                 const updateStore = () => {
                     if (!this.__store__) {
                         return;
                     }
-                    let localState = getProps(watcher)(store ? store.getState() : {}, this.props);
+                    let localState = pluck(store ? store.getState() : {});
                     // if store value does change, do not call update
                     for (let i in localState) if (localState[i] !== globalState[i]) {
                         globalState = localState;
@@ -85,18 +84,11 @@ export default function component(options = {}) {
                 };
 
                 this.mergeProps = () => ({
-                    ...this,
+                    ..._self,
                     ...props,
                     setState,
                     getState,
                     ...globalState
-                });
-
-                otherHooksAndHandlers && Object.keys(otherHooksAndHandlers).map((key) => {
-                    const fn = otherHooksAndHandlers[key];
-                    if (typeof fn === 'function') {
-                        this[key] = this.proxy(fn, this, key);
-                    }
                 });
 
                 componentDidMount && (this.componentDidMount = () => {
@@ -118,10 +110,8 @@ export default function component(options = {}) {
                     return h(view, this.mergeProps());
                 };
             }
-            proxy(func, context, key) {
+            proxy(func, context) {
                 return func && function hook() {
-                    const { __store__ } = this;
-                    let globalState = __store__ ? getProps(watcher)(store ? store.getState() : {}) : {};
                     func.apply(null, [this.mergeProps(), ...arguments]);
                 }.bind(context);
             }
