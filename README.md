@@ -1,15 +1,15 @@
-# hoc 
+# hoc
 
-hoc provide a simple apis to create javascript reusable components. It provide an abstraction from underlying framework, helps reuse the same component for different libraries with minimum code changes. 
+hoc provides a simple APIs to create reusable javascript components. It provides an abstraction from the underlying library use to manage these components. The abstraction enables teams to reuse the same components with different libraries with minimum code changes.
 
 ## Installation
 
 ```
-npm i -S @js-factory/hoc 
+npm i -S @js-factory/hoc
 ```
 
 ## Motivation
-Modern frontend applications are getting complex day by day. It has to manage core business logic, even more complex layouts, and data. This is extremely important that frontend application architecture follows core software design principles. 
+Modern frontend applications are getting complex every day. It has to manage core business logic, complex layouts, and data. It becomes necessary that frontend application architecture follows core software design principles.
 
 In [computer science](https://en.wikipedia.org/wiki/Computer_science), separation of concerns (SoC) is a design principle for separating a computer program into distinct sections, such that each section addresses a separate [concern](https://en.wikipedia.org/wiki/Concern_%28computer_science%29).
 
@@ -17,6 +17,7 @@ In [computer science](https://en.wikipedia.org/wiki/Computer_science), separatio
 
 
 ## Getting Started
+
 ```js
 // ExampleComponent.js
 
@@ -31,24 +32,24 @@ import onScrollHandler from './handlers/onScrollHanlder';
 import ExampleComponentTmpl from './templates/ExampleComponentTmpl';
 
 const state = {
-    salutation: 'Dear'
+   salutation: 'Dear'
 };
 
 const instanceProps = {
-    counter: 0
+   counter: 0
 };
 
 @Component({
-    state,
-    instanceProp,
-    componentDidMount,
-    componentWillMount,
-    componentWillUpdate,
-    componentWillUnmount,
-    componentShouldUpdate,
-    onClickHanlder,
-    onScrollHanlder,
-    template: ExampleComponentTmpl
+   state,
+   instanceProp,
+   componentDidMount,
+   componentWillMount,
+   componentWillUpdate,
+   componentWillUnmount,
+   componentShouldUpdate,
+   onClickHanlder,
+   onScrollHanlder,
+   template: ExampleComponentTmpl
 })
 export default class ExampleComponent {}
 ```
@@ -60,14 +61,14 @@ export default class ExampleComponent {}
 import { h } from 'preact';
 
 const ExampleComponentTmpl = (props) => {
-    const { state, instanceProp, onClickHander } = props;
-    const { salutation } = state;
-    return(
-        <div>
-            <p> {salutation} user! </p>
-            <button onClick={onClickHander}>Say Hello </button>
-        </div>
-    );
+   const { state, instanceProp, onClickHander } = props;
+   const { salutation } = state;
+   return(
+       <div>
+           <p> {salutation} user! </p>
+           <button onClick={onClickHander}>Say Hello </button>
+       </div>
+   );
 }
 ```
 
@@ -75,38 +76,38 @@ const ExampleComponentTmpl = (props) => {
 `HOC` offers four major components e.g. `state`, `template`, `instanceProps`, `methods`.
 
 ### state
-The state is a plain JavaScript object that represents your component local state. Please read about [React state](https://reactjs.org/docs/state-and-lifecycle.html) if you are not aware about what a component state is all about. `hoc` exposes a it's own `setState` to update component state.
+The state is a plain JavaScript object that represents your component local state. Please read about [React state](https://reactjs.org/docs/state-and-lifecycle.html) if you are not aware of what a component state is all about. `hoc` exposes it's own `setState` to update component state.
 
 ```js
 const state = {
-    ...
-    count: 0,
-    ...
+   ...
+   count: 0,
+   ...
 };
 
-const increment = ({ state, state }) => {
-    const { count } = state;
-    return state({
-        count: count + 1
-    });
+const increment = ({ state, setState }) => {
+   const { count } = state;
+   return setState({
+       count: count + 1
+   });
 };
 ```
 
 ### instanceProps
-The instanceProps is same as *state* unlike state any update to it will not trigger component re-rendering. You can update instanceProps using `setInstanceProps` method.
+The instanceProps are the same as *state*, unlike the state, any update to instanceProps will not trigger component re-rendering. You can update instanceProps using `setInstanceProps` method.
 
 ```js
 const instanceProps = {
-    ...
-    count: 0,
-    ...
+   ...
+   count: 0,
+   ...
 };
 
 const increment = ({ instanceProps, setInstanceProps }) => {
-    const { count } = instanceProps;
-    return setInstanceProps({
-        count: count + 1
-    });
+   const { count } = instanceProps;
+   return setInstanceProps({
+       count: count + 1
+   });
 };
 
 ```
@@ -114,39 +115,39 @@ const increment = ({ instanceProps, setInstanceProps }) => {
 ### template
 A template is functional component represents presentation layer.
 
-### methods
+### Pure JavaScript Functions
 You can add as many functions as you need to manage your component state and handle user interactions. These methods could be lifecycle hooks of underlying framework like componentDidMount, componentWillUpdate or simple event handlers.
 
 #### life cycle hooks
-hoc allows developer to use underlying library hooks like componentDidMount, componentWillMount etc. Please refer above component definition.
+hoc allows developers to use underlying library hooks like componentDidMount, componentWillMount etc. Please refer above component definition.
 
 **Note:** Unlike react or preact you will not have access to `this`. `hoc` will inject all component properties and methods in run time.
 
 
 #### event handlers
-You can define any dom event handler and bind it with component. Event handlers are plain javascript functions and surely not tightly coupled with any underlying library. 
+You can define any dom event handler and bind it to the component. Event handlers are plain javascript functions and surely not tightly coupled with any underlying library.
 
 ```js
 const onClickHandler = (props, e) => {
-  e.preventDefault();
-  const { state, setState, getInstanceProp } = props;
-  return setState({
-    updateMsg: 'I am updated'
-  });
+ e.preventDefault();
+ const { state, setState, getInstanceProp } = props;
+ return setState({
+   updateMsg: 'I am updated'
+ });
 }
 ```
 
-**props** contains component state, methods etc. 
+**props** contains component state, methods etc.
 **e** is a dom event instance.
 
 #### Other methods
-Usually any component has a lot of helper methods. You can define these method as part of component definition.
+Usually, any component has a lot of helper methods. You can define these methods as part of a component definition.
 
 ```js
 function foo(props, ...args){
-    // function body goes here
+   // function body goes here
 }
 ```
 
-**props** contains component state, methods etc. 
+**props** contains component state, methods etc.
 **args** are runtime arguments supplied
