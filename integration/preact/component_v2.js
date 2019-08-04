@@ -106,7 +106,7 @@ export default function component(options = {}) {
                 })
 
                 this.render = (props) => {
-                    const view = template || templates || InnerComponent;
+                    const view = template || InnerComponent;
                     return h(view, this.mergeProps());
                 };
             }
