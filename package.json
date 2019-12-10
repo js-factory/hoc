@@ -1,6 +1,6 @@
 {
   "name": "@js-factory/hoc",
-  "version": "0.3.0-beta.1",
+  "version": "0.3.0",
   "description": "Higher order component",
   "main": "./packages/index.js",
   "scripts": {
