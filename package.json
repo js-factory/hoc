@@ -1,6 +1,6 @@
 {
   "name": "@js-factory/hoc",
-  "version": "0.2.4",
+  "version": "0.3.0",
   "description": "Higher order component",
   "main": "./packages/index.js",
   "scripts": {
@@ -35,7 +35,7 @@
     "url": "https://github.com/js-factory/hoc/issues"
   },
   "homepage": "https://github.com/js-factory/hoc#readme",
-  "dependencies": {
-    "preact": "^8.4.2"
+  "peerDependencies": {
+    "preact": ">=8.4.2"
   }
 }

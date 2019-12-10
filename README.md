@@ -15,6 +15,11 @@ In [computer science](https://en.wikipedia.org/wiki/Computer_science), separatio
 
 `hoc` prefers [functional programming](https://en.wikipedia.org/wiki/Functional_programming) and allows programmers to write small functions. These functions follow [single responsibility principle](https://en.wikipedia.org/wiki/Single_responsibility_principle) and do just one thing and produce predictable output.
 
+## Dependency 
+You need to install preact in the host application.
+```
+npm i -S preact
+```
 
 ## Getting Started
 
