@@ -7,8 +7,6 @@ import getProps from '../util/getProps';
 
 const isObject = (target) => (Object.prototype.toString.call(target) === '[object Object]');
 let store = {};
-let storeActivated = false;
-
 
 function attachInstanceProps(instanceProps) {
     this.instanceProps = instanceProps || {};
@@ -92,17 +90,17 @@ export default function component(options = {}) {
                 });
 
                 componentDidMount && (this.componentDidMount = () => {
-                    componentDidMount.call(null, this.mergeProps());
                     if (this.__store__) {
                         store.subscribe(updateStore);
                     }
+                    componentDidMount.call(null, this.mergeProps());
                 })
 
                 componentWillUnmount && (this.componentWillUnmount = () => {
-                    componentWillUnmount.call(null, this.mergeProps());
                     if (this.__store__) {
                         store.unsubscribe(updateStore);
                     }
+                    componentWillUnmount.call(null, this.mergeProps());
                 })
 
                 this.render = (props) => {
@@ -121,5 +119,4 @@ export default function component(options = {}) {
 
 export function injectStore(appStore) {
     store = appStore;
-    storeActivated = true;
 }

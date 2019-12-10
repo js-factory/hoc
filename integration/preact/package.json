@@ -27,7 +27,7 @@
     "url": "https://github.com/js-factory/hoc/issues"
   },
   "homepage": "https://github.com/js-factory/hoc#readme",
-  "dependencies": {
-    "preact": "^8.4.2"
+  "peerDependencies": {
+    "preact": ">=8.4.2"
   }
 }
