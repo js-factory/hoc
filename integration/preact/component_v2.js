@@ -89,25 +89,25 @@ export default function component(options = {}) {
                     ...globalState
                 });
 
-                componentDidMount && (this.componentDidMount = () => {
+                this.componentDidMount = () => {
                     if (this.__store__) {
                         store.subscribe(updateStore);
                     }
-                    componentDidMount.call(null, this.mergeProps());
-                })
+                    componentDidMount && componentDidMount.call(null, this.mergeProps());
+                }
 
-                componentWillUnmount && (this.componentWillUnmount = () => {
+                this.componentWillUnmount = () => {
                     if (this.__store__) {
                         store.unsubscribe(updateStore);
                     }
-                    componentWillUnmount.call(null, this.mergeProps());
-                })
-
+                    componentWillUnmount && componentWillUnmount.call(null, this.mergeProps());
+                }
                 this.render = (props) => {
                     const view = template || InnerComponent;
                     return h(view, this.mergeProps());
                 };
             }
+
             proxy(func, context) {
                 return func && function hook() {
                     func.apply(null, [this.mergeProps(), ...arguments]);
