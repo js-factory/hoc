@@ -36,6 +36,7 @@ export default function component(options = {}) {
         instanceProps,
         componentDidMount,
         componentWillUnmount,
+        componentWillReceiveProps,
         ...rest
     } = options;
     let { actions, watcher } = options;
@@ -46,8 +47,7 @@ export default function component(options = {}) {
                 const setState = (newState) => this.setState({ ...newState });
                 const getState = () => this.state;
                 const _self = this;
-
-                this.state = state || {};
+                this.state = state(props) || {};
                 this.__store__ = Wrapper.__store__;
 
                 if (this.__store__) {
@@ -56,10 +56,11 @@ export default function component(options = {}) {
                 }
 
                 const pluck = getProps(watcher);
+                const instancePropsClone = {...instanceProps}
                 // Attach handlers
                 bindHandler.call(this, actions, store.action);
                 bindHandler.call(this, rest, this.proxy);
-                attachInstanceProps.call(this, instanceProps);
+                attachInstanceProps.call(this, instancePropsClone);
 
                 let globalState = this.__store__ ? pluck(store ? store.getState() : {}) : {};
 
@@ -102,6 +103,11 @@ export default function component(options = {}) {
                     }
                     componentWillUnmount && componentWillUnmount.call(null, this.mergeProps());
                 }
+
+                this.componentWillReceiveProps = (nxtProps) => {
+                    componentWillReceiveProps && componentWillReceiveProps.call(null, nxtProps, this.mergeProps())
+                }
+
                 this.render = (props) => {
                     const view = template || InnerComponent;
                     return h(view, this.mergeProps());
